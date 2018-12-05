@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/update_price"
+        android:icon="@android:drawable/ic_popup_sync"
+        app:showAsAction="always"
+        android:title="@string/update_price" />
+    <item
+        android:id="@+id/auto_update_price"
+        android:title="@string/auto_update_price"
+        app:actionLayout="@layout/menu_item_switch"
+        app:showAsAction="always" />
+</menu>
