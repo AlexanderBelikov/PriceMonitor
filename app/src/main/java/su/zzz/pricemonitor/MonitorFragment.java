@@ -14,10 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import javax.sql.PooledConnection;
 
 public class MonitorFragment extends Fragment {
     private static final String TAG = MonitorFragment.class.getSimpleName();
@@ -30,7 +33,7 @@ public class MonitorFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+//        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -41,7 +44,6 @@ public class MonitorFragment extends Fragment {
         Toolbar toolbar = v.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         viewPrice = v.findViewById(R.id.view_price);
-//        new FetchPriceTask().execute();
         updateUI();
         return v;
     }
@@ -54,10 +56,17 @@ public class MonitorFragment extends Fragment {
         MenuItem itemAutoUpdatePrice = menu.findItem(R.id.auto_update_price);
         itemAutoUpdatePrice.setActionView(R.layout.menu_item_switch);
         final Switch sw = menu.findItem(R.id.auto_update_price).getActionView().findViewById(R.id.item_switch);
-        sw.setOnClickListener(new View.OnClickListener() {
+        sw.setChecked(PollPriceService.isServiceAlarmOn(getActivity()));
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                boolean isPollPriceServiceOn = PollPriceService.isServiceAlarmOn(getActivity());
+
+                Toast.makeText(getActivity(), isChecked?"On":"Off", Toast.LENGTH_LONG).show();
+                if(isChecked == isPollPriceServiceOn){
+                    return;
+                }
+                PollPriceService.setServiceAlarm(getActivity(), isChecked);
             }
         });
 
@@ -67,7 +76,12 @@ public class MonitorFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.update_price:
-                new FetchPriceTask().execute();
+                updateUI();
+                return true;
+            case R.id.reset_price:
+                PricePreferences.setPrice(getActivity(), 0);
+                updateUI();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/reset_price"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        app:showAsAction="always"
+        android:title="@string/update_price" />
+    <item
         android:id="@+id/update_price"
         android:icon="@android:drawable/ic_popup_sync"
         app:showAsAction="always"
